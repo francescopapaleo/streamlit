@@ -27,12 +27,17 @@
 
 4. Setting up the GitHub repository for Streamlit integration
 
+    [Streamlit public address](https://esse-playlist.streamlit.app/) 
+
+    ***...Still not working...***
+
 5. Build a web interface to generate playlists based on the computed descriptors
 
-    ***...Work in progress***
+    ***...Work in progress...***
 
 ### Main issues:
 
 1. Impossible to deploy a web interface with streamlite using http
 2. Still figuring out how to finalise the playlist generation and preview
-    >> event though the computation is done, there are still problems in file-paths handling and m3u generation
+
+***...even though the computation is done, there are still problems in file-paths handling and m3u generation...***
