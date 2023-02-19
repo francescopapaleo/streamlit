@@ -2,11 +2,10 @@ import os.path
 import random
 import streamlit as st
 import pandas
-import pathlib
 
 
 m3u_filepaths_file = 'playlists/streamlit.m3u8'
-ESSENTIA_ANALYSIS_PATH = '/Users/francescopapaleo/Dropbox/Mac/Documents/git-box/streamlit/data_test/test_descriptors_out.json.pickle'
+ESSENTIA_ANALYSIS_PATH = 'data/files_essentia_effnet-discogs.jsonl.pickle'
 
 
 def load_essentia_analysis():
