@@ -1,27 +1,29 @@
 import os.path
 import random
 import streamlit as st
-import pandas as pd
+import pandas
 
 
 m3u_filepaths_file = 'playlists/streamlit.m3u8'
-ESSENTIA_ANALYSIS_PATH = '/Users/francescopapaleo/Dropbox/Mac/Documents/git-box/streamlit/data_test/descriptors_output.json'
+ESSENTIA_ANALYSIS_PATH = 'data/files_essentia_effnet-discogs.jsonl.pickle'
 
 
 def load_essentia_analysis():
-    return pd.read_json(ESSENTIA_ANALYSIS_PATH)
+    return pandas.read_pickle(ESSENTIA_ANALYSIS_PATH)
 
 
 st.write('# Audio analysis playlists example')
 st.write(f'Using analysis data from `{ESSENTIA_ANALYSIS_PATH}`.')
 audio_analysis = load_essentia_analysis()
-audio_analysis_descriptors = audio_analysis.columns
+audio_analysis_styles = audio_analysis.columns
 st.write('Loaded audio analysis for', len(audio_analysis), 'tracks.')
 
-st.write('Dataset analysis statistics:')
+st.write('## 🔍 Select')
+st.write('### By style')
+st.write('Style activation statistics:')
 st.write(audio_analysis.describe())
 
-style_select = st.multiselect('Select descriptor', audio_analysis_descriptors)
+style_select = st.multiselect('Select by style activations:', audio_analysis_styles)
 if style_select:
     # Show the distribution of activation values for the selected styles.
     st.write(audio_analysis[style_select].describe())
@@ -30,7 +32,7 @@ if style_select:
     style_select_range = st.slider(f'Select tracks with `{style_select_str}` activations within range:', value=[0.5, 1.])
 
 st.write('## 🔝 Rank')
-style_rank = st.multiselect('Rank by style activations (multiplies activations for selected styles):', audio_analysis_descriptors, [])
+style_rank = st.multiselect('Rank by style activations (multiplies activations for selected styles):', audio_analysis_styles, [])
 
 st.write('## 🔀 Post-process')
 max_tracks = st.number_input('Maximum number of tracks (0 for all):', value=0)
@@ -50,7 +52,7 @@ if st.button("RUN"):
 
         result = audio_analysis_query
         for style in style_select:
-            result = result.loc[pd.to_numeric(result[style], errors='coerce') >= style_select_range[0]]
+            result = result.loc[result[style] >= style_select_range[0]]
         st.write(result)
         mp3s = result.index
 
