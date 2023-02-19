@@ -81,6 +81,8 @@ if st.button("RUN"):
         f.write('\n'.join(mp3_paths))
         st.write(f'Stored M3U playlist (local filepaths) to `{m3u_filepaths_file}`.')
 
+    st.echo(mp3s[:10])
+
     st.write('Audio previews for the first 10 results:')
     for mp3 in mp3s[:10]:
         st.audio(mp3, format="audio/mp3", start_time=0)
