@@ -7,7 +7,6 @@ import streamlit as st
 import pandas as pd
 
 import altair as alt
-import math
 
 m3u_filepaths_file = 'playlists/streamlit.m3u8'
 ESSENTIA_ANALYSIS_PATH = '/Users/francescopapaleo/Dropbox/Mac/Documents/git-box/streamlit/data_test/descriptors_rel_path.json'

@@ -14,8 +14,7 @@
 - Voice / Instrumental [MusicNN Model](https://essentia.upf.edu/models/classifiers/voice_instrumental/voice_instrumental-musicnn-mtt-2.pb)
 - Arousal / Valence [Emomusic MOdel](https://essentia.upf.edu/models/classification-heads/emomusic/emomusic-musicnn-msd-2.pb)
 
-First iteration took 6 hours for the entire dataset, second iteration after small optimisation and usage of GPUs took around 2 hours.
-Different pipelines have been tested to optimize performance:
+First iteration took 6 hours for the entire dataset, different pipelines have been tested to optimize performance:
 - no difference has been noticed using csv, json files as index list
 - no difference in performance between the use of dictionaries or lists
 - no improvement in computing time when using Pool package for parallel processing
