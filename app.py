@@ -6,8 +6,6 @@ import random
 import streamlit as st
 import pandas as pd
 
-import altair as alt
-
 m3u_filepaths_file = 'playlists/streamlit.m3u8'
 ESSENTIA_ANALYSIS_PATH = '/data/descriptors_rel_path.json'
 
