@@ -1,4 +1,4 @@
-labels = [
+style_400_keys = [
     "Blues---Boogie Woogie",
     "Blues---Chicago Blues",
     "Blues---Country Blues",
