@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 # local stuff that can't be uploaded to github
-/audio
+audio/
