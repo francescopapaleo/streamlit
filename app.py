@@ -46,10 +46,18 @@ if style_select:
 
     max_tracks = st.number_input('Maximum number of tracks (0 for all):', value=0)
     shuffle = st.checkbox('Random shuffle')
+    
+    uploaded_file = st.file_uploader("Upload an MP3 file", type="mp3")
 
     if st.button("RUN"):
         st.write('## 🔊 Results')
         mp3s = list(style_query.index)
+        
+        if uploaded_file is not None:
+            uploaded_mp3 = uploaded_file.read()
+            with open('uploaded.mp3', 'wb') as f:
+                f.write(uploaded_mp3)
+            mp3s.append('uploaded.mp3')
 
         if shuffle:
             random.shuffle(mp3s)
