@@ -10,13 +10,6 @@ m3u_filepaths_file = 'playlists/streamlit.m3u8'
 ESSENTIA_ANALYSIS_PATH = 'data/extended_descriptors_output.pickle'
 AUDIO_DIR = '/Users/francescopapaleo/Dropbox/Mac/Documents/git-box/streamlit/audio'
 
-
-#     essentia_analysis = pd.read_pickle(ESSENTIA_ANALYSIS_PATH)
-#     # df = pd.DataFrame.from_dict(essentia_analysis, orient='index')
-#     df = pd.DataFrame.from_dict(essentia_analysis, orient='index')
-#     df_transposed = df.transpose()
-#     return df_transposed
-
 def load_essentia_analysis():
     with open(ESSENTIA_ANALYSIS_PATH, 'rb') as f:
         unpickled = []
@@ -29,8 +22,6 @@ def load_essentia_analysis():
     df.set_index('file_path', inplace=True)
     return df
 
-
-
 st.write('# Audio analysis playlists example')
 st.write(f'Using analysis data from `{ESSENTIA_ANALYSIS_PATH}`.')
 audio_analysis = load_essentia_analysis()
@@ -42,6 +33,7 @@ st.write('Style activation statistics:')
 st.write(audio_analysis.describe())
 
 style_select = st.multiselect('Select by style activations:', audio_analysis_styles)
+
 if style_select:
     # Show the distribution of activation values for the selected styles.
     st.write(audio_analysis[style_select].describe())
@@ -53,9 +45,8 @@ st.write('## 🔝 Rank')
 style_rank = st.multiselect('Rank by style activations (multiplies activations for selected styles):', audio_analysis_styles, [])
 
 bpm_range = st.slider('Select BPM range:', value=[int(audio_analysis['bpm'].min()), int(audio_analysis['bpm'].max())])
-danceability_range = st.slider('Select danceability range:', value=[0.0, 1.0])
-voice_instrumental_select = st.selectbox('Select voice/instrumental:', ['', 'instrumental', 'voice'])
-valence_arousal_range = st.slider('Select valence/arousal range:', -9.0, 9.0, (-9.0, 9.0), 0.1)
+
+danceability_range = st.slider('Select danceability range:', value=[1.0, 7.0])
 
 st.write('## 🔀 Post-process')
 max_tracks = st.number_input('Maximum number of tracks (0 for all):', value=0)
@@ -65,15 +56,16 @@ if st.button("RUN"):
     st.write('## 🔊 Results')
     mp3s = list(audio_analysis.index)
 
+    # filter by style activations
     if style_select:
         audio_analysis_query = audio_analysis.loc[mp3s][style_select]
-
         result = audio_analysis_query
         for style in style_select:
             result = result.loc[result[style] >= style_select_range[0]]
         st.write(result)
         mp3s = result.index
 
+    # rank by style activations
     if style_rank:
         audio_analysis_query = audio_analysis.loc[mp3s][style_rank]
         audio_analysis_query['RANK'] = audio_analysis_query[style_rank[0]]
@@ -85,6 +77,10 @@ if st.button("RUN"):
 
         st.write('Applied ranking by audio style predictions.')
         st.write(ranked)
+
+    mp3s = audio_analysis.loc[mp3s][(audio_analysis['bpm'] >= bpm_range[0]) & (audio_analysis['bpm'] <= bpm_range[1])].index
+
+    mp3 = audio_analysis.loc[mp3s][(audio_analysis['danceability'] >= danceability_range[0]) & (audio_analysis['danceability'] <= danceability_range[1])].index
 
     if max_tracks:
         mp3s = mp3s[:max_tracks]
@@ -103,4 +99,4 @@ if st.button("RUN"):
 
     st.write('Audio previews for the first 10 results:')
     for mp3_path in mp3_paths[:10]:
-        st.audio(mp3_path, format="audio/mp3", start_time=0)
+        st.audio(str(mp3_path), format="audio/mp3", start_time=0)
