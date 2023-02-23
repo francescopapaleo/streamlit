@@ -2,14 +2,20 @@ import os.path
 import random
 import streamlit as st
 import pandas
-
+import pickle
 
 m3u_filepaths_file = 'playlists/streamlit.m3u8'
-ESSENTIA_ANALYSIS_PATH = 'data/converted_pickle.pickle'
+ESSENTIA_ANALYSIS_PATH = 'examples_data/files_essentia_effnet-discogs.jsonl.pickle'
 
 
 def load_essentia_analysis():
-    return pandas.read_pickle(ESSENTIA_ANALYSIS_PATH)
+    with open(ESSENTIA_ANALYSIS_PATH, "rb") as f:
+        while True:
+            try:
+                yield pickle.load(f)
+            except EOFError:
+                break
+        # pandas.read_pickle(ESSENTIA_ANALYSIS_PATH)
 
 
 st.write('# Audio analysis playlists example')
@@ -78,11 +84,11 @@ if st.button("RUN"):
 
     # Store the M3U8 playlist.
     with open(m3u_filepaths_file, 'w') as f:
-        # Modify relative mp3 paths to make them accessible from the playlist folder.
-        mp3_paths = [os.path.join('..', mp3) for mp3 in mp3s]
-        f.write('\n'.join(mp3_paths))
-        st.write(f'Stored M3U playlist (local filepaths) to `{m3u_filepaths_file}`.')
+    # Modify relative mp3 paths to make them accessible from the playlist folder.
+        mp3_paths = [Path('../audio').joinpath(mp3).resolve() for mp3 in mp3s]
+        f.write('\n'.join(str(mp3_path) for mp3_path in mp3_paths))
+        st.write(f'Stored M3U playlist (absolute filepaths) to `{m3u_filepaths_file}`.')
 
     st.write('Audio previews for the first 10 results:')
-    for mp3 in mp3s[:10]:
-        st.audio(mp3, format="audio/mp3", start_time=0)
+    for mp3_path in mp3_paths[:10]:
+        st.audio(str(mp3_path), format="audio/mp3", start_time=0)
