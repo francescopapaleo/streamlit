@@ -55,7 +55,7 @@ style_select = st.multiselect('Select by style activations:', style_400_keys)
 bpm_range = st.slider('Select BPM range:', value=[int(audio_analysis['bpm'].min()), int(audio_analysis['bpm'].max())])
 danceability_range = st.slider('Select danceability range:', value=[0.0, 1.0])
 voice_instrumental_select = st.selectbox('Select voice/instrumental:', ['', 'instrumental', 'voice'])
-valence_arousal_range = st.slider('Select valence/arousal range:', value=[-1.0, 1.0, -1.0, 1.0])
+valence_arousal_range = st.slider('Select valence/arousal range:', -1.0, 1.0, (-1.0, 1.0), 0.1)
 
 df = filter_by_style(audio_analysis, style_select)
 df = filter_by_bpm(df, bpm_range)
