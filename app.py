@@ -1,7 +1,3 @@
-######## THIS IS MY APP FILE ########
-
-from collections import namedtuple
-
 import os.path
 import sys
 from pathlib import Path
@@ -13,14 +9,41 @@ import pandas as pd
 CURRENT_DIR = Path().absolute()
 sys.path.append('./data')
 
-
 from style_labels import style_400_keys
 
-m3u_filepaths_file = 'playlists/streamlit.m3u8'
 ESSENTIA_ANALYSIS_PATH = 'data/extended_descriptors_output_processed.json'
 
 def load_essentia_analysis():
     return pd.read_json(ESSENTIA_ANALYSIS_PATH)
+
+def filter_by_style(df, style_select):
+    if style_select:
+        style_query = df
+        for style_key in style_select:
+            style_query = df.loc[(df['style_activations'].apply(lambda x: x[style_key] >= 0.5)).all(axis=1)]
+        df = style_query
+    return df
+
+def filter_by_bpm(df, bpm_range):
+    if bpm_range:
+        df = df.loc[(df['bpm'] >= bpm_range[0]) & (df['bpm'] <= bpm_range[1])]
+    return df
+
+def filter_by_danceability(df, danceability_range):
+    if danceability_range:
+        df = df.loc[(df['danceability'] >= danceability_range[0]) & (df['danceability'] <= danceability_range[1])]
+    return df
+
+def filter_by_voice_instrumental(df, voice_instrumental_select):
+    if voice_instrumental_select:
+        df = df.loc[df['voice_instrumental'] == voice_instrumental_select]
+    return df
+
+def filter_by_valence_arousal(df, valence_arousal_range):
+    if valence_arousal_range:
+        df = df.loc[(df['valence'] >= valence_arousal_range[0]) & (df['valence'] <= valence_arousal_range[1]) &
+                    (df['arousal'] >= valence_arousal_range[2]) & (df['arousal'] <= valence_arousal_range[3])]
+    return df
 
 st.write('# Audio analysis playlists example')
 st.write(f'Using analysis data from `{ESSENTIA_ANALYSIS_PATH}`.')
@@ -28,47 +51,23 @@ audio_analysis = load_essentia_analysis()
 st.write(audio_analysis.describe())
 st.write('Loaded audio analysis for', len(audio_analysis), 'tracks.')
 
-bpm = audio_analysis['bpm']
-bpm_range = st.slider('Select BPM range:', value=[int(bpm.min()), int(bpm.max())])
-
-bpm_query = audio_analysis.loc[(audio_analysis['bpm'] >= bpm_range[0]) & (audio_analysis['bpm'] <= bpm_range[1])]
-bpm_index = bpm_query.sort_index()
-st.write(bpm_index)
-
-style = audio_analysis['style_activations']
 style_select = st.multiselect('Select by style activations:', style_400_keys)
-if style_select:
-    style_query = audio_analysis
-    for style_key in style_select:
-        style_query = audio_analysis.loc[(audio_analysis['style_activations'].apply(lambda x: x[style_key] >= 0.5)).all(axis=1)]
-    style_query = style_query.loc[style_query.index.isin(bpm_query.index)]
-    st.write(style_query)
+bpm_range = st.slider('Select BPM range:', value=[int(audio_analysis['bpm'].min()), int(audio_analysis['bpm'].max())])
+danceability_range = st.slider('Select danceability range:', value=[0.0, 1.0])
+voice_instrumental_select = st.selectbox('Select voice/instrumental:', ['', 'instrumental', 'voice'])
+valence_arousal_range = st.slider('Select valence/arousal range:', value=[-1.0, 1.0, -1.0, 1.0])
 
-    max_tracks = st.number_input('Maximum number of tracks (0 for all):', value=0)
-    shuffle = st.checkbox('Random shuffle')
-    
-    uploaded_file = st.file_uploader("Upload an MP3 file", type="mp3")
+df = filter_by_style(audio_analysis, style_select)
+df = filter_by_bpm(df, bpm_range)
+df = filter_by_danceability(df, danceability_range)
+df = filter_by_voice_instrumental(df, voice_instrumental_select)
+df = filter_by_valence_arousal(df, valence_arousal_range)
 
-    if st.button("RUN"):
-        st.write('## 🔊 Results')
-        mp3s = list(style_query.index)
-        
-        if uploaded_file is not None:
-            uploaded_mp3 = uploaded_file.read()
-            with open('uploaded.mp3', 'wb') as f:
-                f.write(uploaded_mp3)
-            mp3s.append('uploaded.mp3')
+st.write(df)
 
-        if shuffle:
-            random.shuffle(mp3s)
+max_tracks = st.number_input('Maximum number of tracks (0 for all):', value=0)
+shuffle = st.checkbox('Random shuffle')
 
-        if max_tracks > 0:
-            mp3s = mp3s[:max_tracks]
-
-        with open(m3u_filepaths_file, 'w') as f:
-            for mp3 in mp3s:
-                f.write(mp3 + '\n')
-
-        st.write('Wrote', len(mp3s), 'tracks to', m3u_filepaths_file)
-
-        st.audio(m3u_filepaths_file)
+if st.button("RUN"):
+    st.write('## 🔊 Results')
+   
