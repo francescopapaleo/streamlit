@@ -17,11 +17,9 @@ def load_essentia_analysis():
     return pd.read_json(ESSENTIA_ANALYSIS_PATH)
 
 def filter_by_style(df, style_select):
-    print(f"style_select type: {type(style_select)}")
-    style_key = style_select.lower().replace(' ', '_')
-    style_query = df.loc[(df['style_activations'].apply(lambda x: x[style_key] >= 0.5)).all(axis=1)]
+    style_select = ' '.join(style_select).lower().replace(' ', '_')
+    style_query = df.loc[(df['style_activations'].apply(lambda x: x[style_select] >= 0.5)).all(axis=1)]
     return style_query
-
 
 
 def filter_by_bpm(df, bpm_range):
