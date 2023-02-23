@@ -1,0 +1,33 @@
+{
+    "file_path":{
+        "0":"gdrive\/MyDrive\/essentia-playlist\/MusAV\/audio_chunks\/audio.000\/1t\/1tnci80rcW5LjqQqBwdZsW.mp3",
+        ...
+    },
+    "bpm":{
+        "0":125.9979400635,
+        ...
+    },
+    "style_activations":{
+        "0":{
+            "Blues---Boogie Woogie":0.0000002875,
+            "Blues---Chicago Blues":0.0000000572,
+            "Blues---Country Blues":0.0000000362,
+            "Blues---Delta Blues":0.0000000071,
+            "Blues---Electric Blues":0.0000000519,
+            "Blues---Harmonica Blues":0.0000000248,
+            .....
+        }
+    },
+    "vi_scaled":{
+        "0":0.5077351,
+        .....
+    },
+    "valence":{
+        "0":5.870118,
+        "1":5.0043736,
+    },
+    "arousal":{
+        "0":5.283186,
+        ....
+    }
+}
