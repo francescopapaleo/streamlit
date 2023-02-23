@@ -52,6 +52,11 @@ if style_select:
 st.write('## 🔝 Rank')
 style_rank = st.multiselect('Rank by style activations (multiplies activations for selected styles):', audio_analysis_styles, [])
 
+bpm_range = st.slider('Select BPM range:', value=[int(audio_analysis['bpm'].min()), int(audio_analysis['bpm'].max())])
+danceability_range = st.slider('Select danceability range:', value=[0.0, 1.0])
+voice_instrumental_select = st.selectbox('Select voice/instrumental:', ['', 'instrumental', 'voice'])
+valence_arousal_range = st.slider('Select valence/arousal range:', -9.0, 9.0, (-9.0, 9.0), 0.1)
+
 st.write('## 🔀 Post-process')
 max_tracks = st.number_input('Maximum number of tracks (0 for all):', value=0)
 shuffle = st.checkbox('Random shuffle')
@@ -92,8 +97,8 @@ if st.button("RUN"):
     # Store the M3U8 playlist.
     with open(m3u_filepaths_file, 'w') as f:
     # Modify relative mp3 paths to make them accessible from the playlist folder.
-        mp3_paths = [Path('../audio').joinpath(mp3) for mp3 in mp3s]
-        f.write('\n'.join(str(mp3_path) for mp3_path in mp3_paths))
+        mp3_paths = [os.path.join('audio', mp3) for mp3 in mp3s]
+        f.write('\n'.join(mp3_path for mp3_path in mp3_paths))
         st.write(f'Stored M3U playlist (absolute filepaths) to `{m3u_filepaths_file}`.')
 
     st.write('Audio previews for the first 10 results:')
