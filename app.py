@@ -17,12 +17,12 @@ def load_essentia_analysis():
     return pd.read_json(ESSENTIA_ANALYSIS_PATH)
 
 def filter_by_style(df, style_select):
-    if style_select:
-        style_query = df
-        for style_key in style_select:
-            style_query = df.loc[(df['style_activations'].apply(lambda x: x[style_key] >= 0.5)).all(axis=1)]
-        df = style_query
-    return df
+    print(f"style_select type: {type(style_select)}")
+    style_key = style_select.lower().replace(' ', '_')
+    style_query = df.loc[(df['style_activations'].apply(lambda x: x[style_key] >= 0.5)).all(axis=1)]
+    return style_query
+
+
 
 def filter_by_bpm(df, bpm_range):
     if bpm_range:
@@ -55,7 +55,7 @@ style_select = st.multiselect('Select by style activations:', style_400_keys)
 bpm_range = st.slider('Select BPM range:', value=[int(audio_analysis['bpm'].min()), int(audio_analysis['bpm'].max())])
 danceability_range = st.slider('Select danceability range:', value=[0.0, 1.0])
 voice_instrumental_select = st.selectbox('Select voice/instrumental:', ['', 'instrumental', 'voice'])
-valence_arousal_range = st.slider('Select valence/arousal range:', -1.0, 1.0, (-1.0, 1.0), 0.1)
+# valence_arousal_range = st.slider('Select valence/arousal range:', -1.0, 1.0, (-1.0, 1.0), 0.1)
 
 df = filter_by_style(audio_analysis, style_select)
 df = filter_by_bpm(df, bpm_range)
@@ -65,9 +65,27 @@ df = filter_by_voice_instrumental(df, voice_instrumental_select)
 
 st.write(df)
 
-max_tracks = st.number_input('Maximum number of tracks (0 for all):', value=0)
-shuffle = st.checkbox('Random shuffle')
+# max_tracks = st.number_input('Maximum number of tracks (0 for all):', value=0)
+# shuffle = st.checkbox('Random shuffle')
 
-if st.button("RUN"):
-    st.write('## 🔊 Results')
-   
+# if st.button("RUN"):
+#         st.write('## 🔊 Results')
+#         mp3s = list(style_query.index)
+
+#         if shuffle:
+#             random.shuffle(mp3s)
+
+#         if max_tracks > 0:
+#             mp3s = mp3s[:max_tracks]
+
+#         with open(m3u_filepaths_file, 'w') as f:
+#             for mp3 in mp3s:
+#                 f.write(mp3 + '\n')
+
+#         st.write('Wrote', len(mp3s), 'tracks to', m3u_filepaths_file)
+
+#         with st.beta_expander("Results"):
+#             for mp3 in mp3s:
+#                 st.write(mp3)
+            
+#         st.audio(m3u_filepaths_file)
