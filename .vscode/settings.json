@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "~/env/lib/python3.10/site-packages/",
+        "./data"
+    ]
+}
