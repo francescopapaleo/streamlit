@@ -61,7 +61,7 @@ df = filter_by_style(audio_analysis, style_select)
 df = filter_by_bpm(df, bpm_range)
 df = filter_by_danceability(df, danceability_range)
 df = filter_by_voice_instrumental(df, voice_instrumental_select)
-df = filter_by_valence_arousal(df, valence_arousal_range)
+# df = filter_by_valence_arousal(df, valence_arousal_range)
 
 st.write(df)
 
