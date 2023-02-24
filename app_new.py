@@ -1,35 +1,40 @@
 import os.path
 import sys
 from pathlib import Path
-import random
+
+import pickle
 
 import streamlit as st
 import pandas as pd
-import ast
-import pickle
+import numpy as np
 
 CURRENT_DIR = Path().absolute()
-sys.path.append('data')
 ESSENTIA_ANALYSIS_PATH = 'data/extended_descriptors_output.pickle'
+
+sys.path.append('data')
 m3u_filepaths_file = 'playlists/streamlit.m3u8'
 
 def load_essentia_analysis():
-    with open(ESSENTIA_ANALYSIS_PATH, "rb") as f:
+    with open(ESSENTIA_ANALYSIS_PATH, 'rb') as f:
+        unpickled = []
         while True:
             try:
-                file_buffer = yield pickle.load(f)
+                unpickled.append(pickle.load(f))
             except EOFError:
                 break
-            return file_buffer
+    df = pd.DataFrame(unpickled)
+    df.set_index('file_path', inplace=True)
+    return df
 
-audio_analysis = pd.DataFrame(load_essentia_analysis())
+audio_analysis = load_essentia_analysis()
+st.write(audio_analysis.head())
 
 st.write('# Audio analysis playlists example')
 st.write(f'Using analysis data from `{ESSENTIA_ANALYSIS_PATH}`.')
-st.write(audio_analysis.describe())
-st.write('Loaded audio analysis for', audio_analysis, 'tracks.')
+st.write(audio_analysis)
+st.write('Loaded audio analysis for', len(audio_analysis), 'tracks.')
 
-style_input = st.selectbox('Select a style:', audio_analysis.columns[6:])
+style_input = st.selectbox('Select a style:', list(audio_analysis.columns[6:]))
 print(style_input)
 activ_value = st.slider('Activation level:', value=[0.0, 1.0])
 bpm_range = st.slider('Select BPM range:', value=[0, 200])
@@ -38,8 +43,10 @@ voice_instrumental_select = st.selectbox('Select voice/instrumental:', ['', 'ins
 valence_arousal_range = st.slider('Select valence/arousal range:', -1.0, 1.0, (-1.0, 1.0), 0.1)
 
 def filter_by_style(audio_analysis, style_input, activ_value):
-    filt_audio_analysis = audio_analysis.filter(by=[style_input, activ_value])
-    return filt_audio_analysis
+    st.write(style_input)
+    result=audio_analysis.loc[:][style_input]
+    result=result.loc[(result>activ_value[0]) & (result<=activ_value[1]) ]
+    return result
     
 def filter_by_bpm(df, bpm_range):
     st.write(df)
@@ -66,23 +73,7 @@ def filter_by_valence_arousal(df, valence_arousal_range):
 if st.button("RUN"):
     st.write('## 🔊 Results')
     style_flt = filter_by_style(audio_analysis, style_input, activ_value)
-    style_act = style_flt.loc[(style_flt[style_input] >= activ_value[0]) & (style_flt[style_input] <= activ_value[1])]
-    bpm_flt = filter_by_bpm(style_act, bpm_range)
-else:
-    bpm_flt = filter_by_bpm(audio_analysis, bpm_range)
 
-# st.write(type(style_act))
-# st.write(bpm_flt)
-
-# results = bpm_flt.to_dict
-
-# st.write(bpm_flt.head(10))
-
-# with open(m3u_filepaths_file, 'w') as f:
-#     # Modify relative mp3 paths to make them accessible from the playlist folder.
-#         for keys, file_path in results.items():
-#             mp3_paths = [os.path.join('audio', mp3) for mp3 in bpm_flt]
-#             object = f.write('\n'.join(mp3_path for mp3_path in mp3_paths))
-
-# def filter_by_style(df, style_input, style_range):
-#     return df.loc[(df[style_input] >= style_range[0]) & (df[style_input] <= style_range[1])]
+    st.write('Audio previews for the first 10 results:')
+    for mp3 in style_flt.index[:10]:
+        st.audio(os.path.join('audio', mp3), format="audio/mp3", start_time=0)

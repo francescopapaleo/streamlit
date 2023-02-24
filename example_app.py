@@ -8,14 +8,16 @@ m3u_filepaths_file = 'playlists/streamlit.m3u8'
 ESSENTIA_ANALYSIS_PATH = 'examples_data/files_essentia_effnet-discogs.jsonl.pickle'
 
 
+# def load_essentia_analysis():
+#     with open(ESSENTIA_ANALYSIS_PATH, "rb") as f:
+#         while True:
+#             try:
+#                 yield pickle.load(f)
+#             except EOFError:
+#                 break
+
 def load_essentia_analysis():
-    with open(ESSENTIA_ANALYSIS_PATH, "rb") as f:
-        while True:
-            try:
-                yield pickle.load(f)
-            except EOFError:
-                break
-        # pandas.read_pickle(ESSENTIA_ANALYSIS_PATH)
+    return pandas.read_pickle(ESSENTIA_ANALYSIS_PATH)
 
 
 st.write('# Audio analysis playlists example')
