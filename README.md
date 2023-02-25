@@ -6,7 +6,7 @@
 
 retrieving recursively a list of files over an agnostic folder structure and storing it in a json file. The function ```filewalker()``` and its call have been implemented in a way that checks the number of results and that doesn't re-compute the list if it already exists.
 
-[Check Colab notebook with the full code for the descriptors extraction]()
+[Check Colab notebook with the full code for the descriptors extraction](https://colab.research.google.com/drive/1wfLR03x49FdYityigL_VLSRFJV6wRahp?usp=sharing)
 
 ### 2. Extracting Audio Descriptors with Essentia
 
