@@ -53,11 +53,7 @@ if st.button("RUN"):
     if style_select:
         audio_analysis_query = audio_analysis.loc[mp3s][style_select]
 
-        #for style in style_select:
-        #    fig, ax = plt.subplots()
-        #    ax.hist(audio_analysis_query[style], bins=100)
-        #    st.pyplot(fig)
-
+    
         result = audio_analysis_query
         for style in style_select:
             result = result.loc[result[style] >= style_select_range[0]]
