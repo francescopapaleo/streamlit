@@ -29,7 +29,8 @@ def load_essentia_analysis():
 audio_analysis = load_essentia_analysis()
 
 # --------------------------------- Visualize the data ---------------------------------- #
-st.write('# Audio analysis playlists example')
+st.write('# Audio analysis and playlists generator')
+st.write('## 📊 Audio analysis data')
 st.dataframe(audio_analysis.describe())
 st.write(f'Using analysis data from `{essentia_descriptors}`.')
 st.write('Loaded audio analysis for', len(audio_analysis), 'tracks.')
