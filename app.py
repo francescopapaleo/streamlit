@@ -34,24 +34,20 @@ st.dataframe(audio_analysis.describe())
 st.write(f'Using analysis data from `{essentia_descriptors}`.')
 st.write('Loaded audio analysis for', len(audio_analysis), 'tracks.')
 
-
 # ----------------------------------- Filter the data ----------------------------------- #
-st.write('## 🔍 Filter by style activation')                                # Style filter
+st.write('## 🔍 Set yoour filters for starting the query')                        
+
 style_select = st.multiselect('Select a style:', list(audio_analysis.columns[5:]))   
 if style_select:
     activ_value = st.slider('Activation level:', value=[0.1, 1.0])
 
-st.write('## 🔍 Filter by BPM')                                             # BPM filter
 bpm_range = st.slider('Select BPM range:', value=[20, 200]) 
 
-st.write('## 🔍 Filter by danceability')                                # Danceability filter
 danceability_range = st.slider('Select danceability range:', value=[0.5, 7.0])
 
-st.write('## 🔍 Filter by voice/instrumental')                          # Voice/instrumental filter
-voice_instrumental_select = st.selectbox('Select voice/instrumental:', ['', 'instrumental', 'voice'])
+voice_instrumental_select = st.selectbox('Select voice / instrumental:', ['', 'instrumental', 'voice'])
 
-st.write('## 🔍 Filter by valence/arousal')                             # Valence/arousal filter
-valence_arousal_range = st.slider('Select valence/arousal range:', -1.0, 1.0, (-1.0, 1.0), 0.1)
+valence_arousal_range = st.slider('Select valence / arousal range:', -1.0, 1.0, (-1.0, 1.0), 0.1)
 
 # -----------------------------------  Run the query ---------------------------------- #
 
