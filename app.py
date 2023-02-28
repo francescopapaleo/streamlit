@@ -26,11 +26,11 @@ def load_essentia_analysis():
 
     return audio_analysis
 
-audio_analysis = load_essentia_analysis().describe()
+audio_analysis = load_essentia_analysis()
 
 # --------------------------------- Visualize the data ---------------------------------- #
 st.write('# Audio analysis playlists example')
-st.dataframe(audio_analysis)
+st.dataframe(audio_analysis.describe())
 st.write(f'Using analysis data from `{essentia_descriptors}`.')
 st.write('Loaded audio analysis for', len(audio_analysis), 'tracks.')
 
@@ -90,10 +90,18 @@ if st.button("RUN"):
             result_voice_instrumental = voice_instrumental_query['voice_instru'].loc[(voice_instrumental_query['voice_instru'] < 0.5)]
         mp3s_voice_instrumental = list(result_voice_instrumental.index)
 
+    if valence_arousal_range:
+        valence_arousal_query = audio_analysis.sort_values(by = ['valence', 'arousal'], ascending = False)
+        valence_min = float(valence_arousal_range[0])
+        valence_max = float(valence_arousal_range[1])
+        result_valence_arousal = valence_arousal_query[['valence', 'arousal']].loc[(valence_arousal_query['valence'] >= valence_min) & 
+                                                                     (valence_arousal_query['valence'] <= valence_max)]
+        mp3s_valence_arousal = list(result_valence_arousal.index)
+
 # -----------------------------------  Show the results ------------------------------------- #
 
     st.write('## 🔍 Results Stats')
-    results = set(mp3s_style) & set(mp3s_bpm) & set(mp3s_danceability) & set(mp3s_voice_instrumental)
+    results = set(mp3s_style) & set(mp3s_bpm) & set(mp3s_danceability)
     mp3_paths = [(audio_root).joinpath(mp3) for mp3 in results]
 
     # Store the M3U8 playlist.
